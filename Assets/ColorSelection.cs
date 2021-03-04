@@ -32,7 +32,7 @@ public class ColorSelection : MonoBehaviour
             Vector3 SL = colorPickerImage.transform.position - new Vector3(130,-130,0);
 
             RaycastHit hit;
-            if (!Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+            if (!Physics.Raycast(Camera.main.ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 10f)), out hit))
                 return;
 
             Vector3 SLToPixel = Vector3.zero;
