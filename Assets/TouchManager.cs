@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using PaintIn3D;
 
 public class TouchManager : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class TouchManager : MonoBehaviour
 
     private Vector2 touchPos;
 
-    private float rotationY, rotationX;
+    private float /*rotationY,*/ rotationX;
     private Camera Camera;
 
     public Transform toRotate;
@@ -21,19 +22,27 @@ public class TouchManager : MonoBehaviour
 
     public static bool isInGame = false;
     public static bool isUsintMovement = false;
-    public static bool isUsingTexture = false;
 
     public RawImage texture;
 
     RaycastHit2D[] HitsBuffer = new RaycastHit2D[1];
+    public bool clickingTex = false;
+    public float timer = 0;
+    bool stopCheck = false;
+    bool chosenTex = false;
+    Vector3 screenPos;
+    public LayerMask hitLayer3D;
 
+    public ScrollRect textureScrollRect;
+    Transform previouslyDetectedPiece = null;
     void Start()
     {
         Instance = this;
         Camera = Camera.main;
         isInGame = false;
         isUsintMovement = false;
-        isUsingTexture = false;
+        clickingTex = false;
+        chosenTex = false;
         texture.gameObject.SetActive(false);
     }
 
@@ -44,40 +53,117 @@ public class TouchManager : MonoBehaviour
             if(Input.touchCount == 1)
             {
                 Touch touch = Input.GetTouch(0);
+
                 if (touch.phase == TouchPhase.Began)
                 {
-                    Vector3 screenPos = Camera.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 100));
+                    HitsBuffer[0] = new RaycastHit2D();
+                    timer = 0;
+
+                    screenPos = Camera.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 100));
 
                     int hitCount = Physics2D.RaycastNonAlloc(screenPos, Vector2.zero, HitsBuffer, Mathf.Infinity);
 
-                    for (int i = 0; i < hitCount; i++)
+                    if(HitsBuffer[0].transform)
                     {
-                        if (HitsBuffer[i].transform.CompareTag("TexturePrefab"))
+                        if (HitsBuffer[0].transform.CompareTag("TexturePrefab"))
                         {
-                            TextureHolderScript THS = HitsBuffer[i].transform.GetComponent<TextureHolderScript>();
-
-                            texture.gameObject.SetActive(true);
-                            texture.texture = THS.heldTexture;
-
-                            PainterManager.Instacne.painter.Texture = THS.heldTexture;
-                            isUsingTexture = true;
-                            Debug.Log("IN TEX");
+                            clickingTex = true;
                         }
                     }
                 }
 
-                if (touch.phase == TouchPhase.Moved && isUsingTexture)
+                if(touch.phase == TouchPhase.Stationary)
                 {
-                    Vector3 screenPos = Camera.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 100));
-                    screenPos.z = 0;
+                    if (clickingTex && !stopCheck)
+                    {
+                        stopCheck = false;
+                        timer += Time.deltaTime;
 
-                    texture.transform.position = screenPos;
-                    Debug.Log(texture.transform.position);
+                        if (timer > 0.3f)
+                        {
+                            textureScrollRect.enabled = false;
+                            chosenTex = true;
+                            stopCheck = true;
+                            TextureHolderScript THS = HitsBuffer[0].transform.GetComponent<TextureHolderScript>();
+
+                            texture.gameObject.SetActive(true);
+                            texture.texture = THS.heldTexture;
+
+                            //PainterManager.Instacne.painter.Texture = THS.heldTexture;
+
+                            Vector3 mousePos = Camera.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 100));
+                            mousePos.z = texture.transform.position.z;
+                            texture.transform.position = mousePos;
+                            //Debug.Log("IN TEX");
+                        }
+                    }
+                }
+
+                if (touch.phase == TouchPhase.Moved )
+                {
+                    clickingTex = false;
+                    timer = 0;
+
+                    if (chosenTex)
+                    {
+                        Vector3 mousePos = Camera.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 100));
+                        mousePos.z = texture.transform.position.z;
+                        texture.transform.position = mousePos;
+
+                        RaycastHit hit;
+                        Ray raycastRay;
+                        Ray ray = Camera.ScreenPointToRay(touch.position);
+
+                        //Debug.DrawRay(Camera.transform.position, mousePos, Color.red);
+                        if (Physics.Raycast(ray, out hit, Mathf.Infinity))
+                        {
+                            if (hit.transform.CompareTag("ShoePiece"))
+                            {
+                                Transform newDetected = hit.transform;
+
+                                P3dPaintable paintableObject = hit.transform.GetComponent<P3dPaintable>();
+
+                                if (previouslyDetectedPiece == null)
+                                {
+                                    Renderer pieceRenderer = newDetected.transform.GetComponent<Renderer>();
+                                    pieceRenderer.materials[0].SetTexture("_BaseMap", texture.texture);
+                                    previouslyDetectedPiece = newDetected;
+                                    RefreshMap(paintableObject);
+                                }
+
+                                if (newDetected != previouslyDetectedPiece)
+                                {
+                                    Renderer previouslyDetectedPieceRenderer = previouslyDetectedPiece.transform.GetComponent<Renderer>();
+                                    previouslyDetectedPieceRenderer.materials[0].SetTexture("_BaseMap", null);
+
+                                    Renderer newDetectedPieceRenderer = newDetected.transform.GetComponent<Renderer>();
+                                    newDetectedPieceRenderer.materials[0].SetTexture("_BaseMap", texture.texture);
+
+                                    previouslyDetectedPiece = newDetected;
+                                    RefreshMap(paintableObject);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (previouslyDetectedPiece)
+                            {
+                                Renderer previouslyDetectedPieceRenderer = previouslyDetectedPiece.transform.GetComponent<Renderer>();
+                                previouslyDetectedPieceRenderer.material.SetTexture("_BaseMap", null);
+                                previouslyDetectedPiece = null;
+                            }
+                        }
+                    }
                 }
 
                 if(touch.phase == TouchPhase.Ended)
                 {
-                    isUsingTexture = false;
+                    textureScrollRect.enabled = true;
+
+                    previouslyDetectedPiece = null;
+                    stopCheck = false;
+                    clickingTex = false;
+                    chosenTex = false;
                     texture.gameObject.SetActive(false);
                 }
             }
@@ -94,8 +180,8 @@ public class TouchManager : MonoBehaviour
                     float deltaX = touchOne.deltaPosition.x;
                     float deltaY = touchOne.deltaPosition.y;
                     rotationX -= deltaX * Time.deltaTime * rotationSpeedModifier;
-                    rotationY += deltaY * Time.deltaTime * rotationSpeedModifier;
-                    toRotate.transform.eulerAngles = new Vector3(0 , -rotationX, rotationY);
+                    //rotationY += deltaY * Time.deltaTime * rotationSpeedModifier;
+                    toRotate.transform.eulerAngles = new Vector3(0 , -rotationX/*, rotationY*/);
                 }
 
                 Vector2 touchOnePrevPos = touchOne.position - touchOne.deltaPosition;
@@ -122,5 +208,11 @@ public class TouchManager : MonoBehaviour
     private void zoom(float v)
     {
         toZoom.transform.position += toZoom.transform.forward * v * zoomSpeed;
+    }
+
+    public void RefreshMap(P3dPaintable paintableObject)
+    {
+        paintableObject.Invoke("Activate", 0.1f);
+        paintableObject.Activate();
     }
 }

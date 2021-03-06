@@ -37,11 +37,11 @@ public class PainterManager : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        painter.Shape = shapeTex;
-        painter.Texture = textureTex;
-    }
+    //void Update()
+    //{
+    //    painter.Shape = shapeTex;
+    //    painter.Texture = textureTex;
+    //}
 
     public void BrushSizeChange(bool UpSize)
     {

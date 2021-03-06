@@ -862,7 +862,9 @@ namespace PaintIn3D
 		[ContextMenu("Activate")]
 		public void Activate()
 		{
-			if (activated == false)
+            activated = false;
+
+            if (activated == false)
 			{
 				paintable = GetComponentInParent<P3dPaintable>();
 

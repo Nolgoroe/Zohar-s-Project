@@ -46,5 +46,8 @@ public class UIManager : MonoBehaviour
     {
         CanvasScreens.SetActive(false);
         TouchManager.isInGame = true;
+        Timer.Instance.timerIsRunning = true;
+
+        ColorPickerSimple.Instacne.colorPickedFrontImage.color = PainterManager.Instacne.painter.Color;
     }
 }

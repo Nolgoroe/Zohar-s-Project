@@ -98,8 +98,10 @@ namespace PaintIn3D
 		/// NOTE: This will automatically be called from P3dPaintable to clone the material.</summary>
 		[ContextMenu("Activate")]
 		public void Activate()
-		{
-			if (activated == false && index >= 0)
+        {
+            activated = false;
+
+            if (activated == false && index >= 0)
 			{
 				var materials = CachedRenderer.sharedMaterials;
 
