@@ -64,7 +64,7 @@ namespace PaintIn3D
 			links.Clear();
 		}
 
-		protected void BreakHits(object owner)
+		public void BreakHits(object owner)
 		{
 			for (var i = links.Count - 1; i >= 0; i--)
 			{

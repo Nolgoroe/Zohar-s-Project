@@ -21,7 +21,6 @@ public class TouchManager : MonoBehaviour
     public float zoomSpeed = 3;
 
     public static bool isInGame = false;
-    public static bool isUsintMovement = false;
 
     public RawImage texture;
 
@@ -35,12 +34,13 @@ public class TouchManager : MonoBehaviour
 
     public ScrollRect textureScrollRect;
     Transform previouslyDetectedPiece = null;
+
+    private P3dInputManager inputManager = new P3dInputManager();
     void Start()
     {
         Instance = this;
         Camera = Camera.main;
         isInGame = false;
-        isUsintMovement = false;
         clickingTex = false;
         chosenTex = false;
         texture.gameObject.SetActive(false);
@@ -50,8 +50,10 @@ public class TouchManager : MonoBehaviour
     {
         if (isInGame)
         {
-            if(Input.touchCount == 1)
+            if (Input.touchCount == 1)
             {
+                PainterManager.Instacne.hitScreenData.enabled = false;
+
                 Touch touch = Input.GetTouch(0);
 
                 if (touch.phase == TouchPhase.Began)
@@ -74,6 +76,8 @@ public class TouchManager : MonoBehaviour
 
                 if(touch.phase == TouchPhase.Stationary)
                 {
+                    PainterManager.Instacne.hitScreenData.enabled = false;
+
                     if (clickingTex && !stopCheck)
                     {
                         stopCheck = false;
@@ -101,6 +105,8 @@ public class TouchManager : MonoBehaviour
 
                 if (touch.phase == TouchPhase.Moved )
                 {
+                    PainterManager.Instacne.hitScreenData.enabled = true;
+
                     clickingTex = false;
                     timer = 0;
 
@@ -111,7 +117,6 @@ public class TouchManager : MonoBehaviour
                         texture.transform.position = mousePos;
 
                         RaycastHit hit;
-                        Ray raycastRay;
                         Ray ray = Camera.ScreenPointToRay(touch.position);
 
                         //Debug.DrawRay(Camera.transform.position, mousePos, Color.red);
@@ -158,6 +163,13 @@ public class TouchManager : MonoBehaviour
 
                 if(touch.phase == TouchPhase.Ended)
                 {
+                    //PainterManager.Instacne.hitScreenData.BreakHits(PainterManager.Instacne.hitScreenData);
+                    //PainterManager.Instacne.hitScreenData.ResetConnections();
+                    //PainterManager.Instacne.hitScreenData.ClearHitCache();
+                    //inputManager.Fingers.Clear();
+
+                    PainterManager.Instacne.hitScreenData.enabled = true;
+
                     textureScrollRect.enabled = true;
 
                     previouslyDetectedPiece = null;
@@ -170,7 +182,6 @@ public class TouchManager : MonoBehaviour
 
             if (Input.touchCount >= 2)
             {
-                isUsintMovement = true;
                 PainterManager.Instacne.hitScreenData.enabled = false;
                 Touch touchOne = Input.GetTouch(0);
                 Touch touchTwo = Input.GetTouch(1);
@@ -194,20 +205,24 @@ public class TouchManager : MonoBehaviour
 
                 zoom(difference * 0.01f);
             }
-            else
-            {
-                if (!ColorPickerSimple.Instacne.Selected)
-                {
-                    isUsintMovement = false;
-                    PainterManager.Instacne.hitScreenData.enabled = true;
-                }
-            }
+
+            //if (Input.GetMouseButton(1))
+            //{
+            //    Debug.Log("rotate");
+            //    float speed = 130; //how fast the object should rotate
+
+            //    toRotate.transform.Rotate(new Vector3(0, speed * Time.deltaTime, 0));
+            //}
         }
     }
 
     private void zoom(float v)
     {
-        toZoom.transform.position += toZoom.transform.forward * v * zoomSpeed;
+
+        Vector3 newxtpos = toZoom.position += toZoom.transform.forward * v * zoomSpeed;
+
+        newxtpos.z = Mathf.Clamp(newxtpos.z, -40, -20);
+        toZoom.position = newxtpos;
     }
 
     public void RefreshMap(P3dPaintable paintableObject)

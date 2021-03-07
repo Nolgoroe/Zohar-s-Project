@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using System;
-
+using UnityEngine.Video;
 
 [Serializable]
 public class AnimatedObject
@@ -24,6 +24,7 @@ public class AnimatedObject
 public class FadeAnimatedObjects
 {
     public Image theObject;
+    public RawImage theObjectRAW;
     public float origingalAlpha = 0;
     public float targetAlpha = 1;
     public float timeToAnimate = 1;
@@ -31,9 +32,22 @@ public class FadeAnimatedObjects
 }
 public class AnimationManager : MonoBehaviour
 {
+    public GameObject BgBeforeVideoPlay;
+
+    public VideoPlayer playerOfVideos;
+
+    public Transform rootObjectOfSideScreen;
+
+    public VideoClip[] videoLanguages;
+
     public AnimatedObject[] objectsToAnimate;
     public FadeAnimatedObjects[] objectsToFade;
 
+    public AnimatedObject sidePanel;
+    public FadeAnimatedObjects[] fadeObjectsInfoPressed;
+    public FadeAnimatedObjects[] fadeObjectsInfoClosed;
+    public FadeAnimatedObjects[] fadeObjectsMovieClosed;
+    public FadeAnimatedObjects[] fadeObjectsGoToGame;
     void Start()
     {
         for (int i = 0; i < objectsToAnimate.Length; i++)
@@ -61,18 +75,94 @@ public class AnimationManager : MonoBehaviour
 
             objectsToFade[i].origingalAlpha = objectsToFade[i].theObject.color.a;
         }
-    }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.X))
+        sidePanel.originalPos = sidePanel.theObject.transform.localPosition;
+
+        for (int i = 0; i < fadeObjectsInfoPressed.Length; i++)
         {
-            AnimateNow();
+            if (fadeObjectsInfoPressed[i].isStartNoAlpha)
+            {
+                if (fadeObjectsInfoPressed[i].theObject)
+                {
+                    fadeObjectsInfoPressed[i].theObject.color = new Color(fadeObjectsInfoPressed[i].theObject.color.r, fadeObjectsInfoPressed[i].theObject.color.g, fadeObjectsInfoPressed[i].theObject.color.b, 0);
+                }
+                else
+                {
+                    fadeObjectsInfoPressed[i].theObjectRAW.color = new Color(fadeObjectsInfoPressed[i].theObjectRAW.color.r, fadeObjectsInfoPressed[i].theObjectRAW.color.g, fadeObjectsInfoPressed[i].theObjectRAW.color.b, 0);
+                }
+            }
+            else
+            {
+                if (fadeObjectsInfoPressed[i].theObject)
+                {
+                    fadeObjectsInfoPressed[i].theObject.color = new Color(fadeObjectsInfoPressed[i].theObject.color.r, fadeObjectsInfoPressed[i].theObject.color.g, fadeObjectsInfoPressed[i].theObject.color.b, 1);
+                    fadeObjectsInfoPressed[i].origingalAlpha = fadeObjectsInfoPressed[i].theObject.color.a;
+                }
+                else
+                {
+                    fadeObjectsInfoPressed[i].theObjectRAW.color = new Color(fadeObjectsInfoPressed[i].theObjectRAW.color.r, fadeObjectsInfoPressed[i].theObjectRAW.color.g, fadeObjectsInfoPressed[i].theObjectRAW.color.b, 1);
+                    fadeObjectsInfoPressed[i].origingalAlpha = fadeObjectsInfoPressed[i].theObjectRAW.color.a;
+                }
+            }
+
         }
 
-        if (Input.GetKeyDown(KeyCode.Z))
+        for (int i = 0; i < fadeObjectsInfoClosed.Length; i++)
         {
-            Rewind();
+            if (fadeObjectsInfoClosed[i].isStartNoAlpha)
+            {
+                if (fadeObjectsInfoClosed[i].theObject)
+                {
+                    fadeObjectsInfoClosed[i].theObject.color = new Color(fadeObjectsInfoClosed[i].theObject.color.r, fadeObjectsInfoClosed[i].theObject.color.g, fadeObjectsInfoClosed[i].theObject.color.b, 0);
+                }
+                else
+                {
+                    fadeObjectsInfoClosed[i].theObjectRAW.color = new Color(fadeObjectsInfoClosed[i].theObjectRAW.color.r, fadeObjectsInfoClosed[i].theObjectRAW.color.g, fadeObjectsInfoClosed[i].theObjectRAW.color.b, 0);
+                }
+            }
+            else
+            {
+                if (fadeObjectsInfoClosed[i].theObject)
+                {
+                    fadeObjectsInfoClosed[i].theObject.color = new Color(fadeObjectsInfoClosed[i].theObject.color.r, fadeObjectsInfoClosed[i].theObject.color.g, fadeObjectsInfoClosed[i].theObject.color.b, 1);
+                    fadeObjectsInfoClosed[i].origingalAlpha = fadeObjectsInfoClosed[i].theObject.color.a;
+                }
+                else
+                {
+                    fadeObjectsInfoClosed[i].theObjectRAW.color = new Color(fadeObjectsInfoClosed[i].theObjectRAW.color.r, fadeObjectsInfoClosed[i].theObjectRAW.color.g, fadeObjectsInfoClosed[i].theObjectRAW.color.b, 1);
+                    fadeObjectsInfoClosed[i].origingalAlpha = fadeObjectsInfoClosed[i].theObjectRAW.color.a;
+                }
+            }
+
+        }
+
+        for (int i = 0; i < fadeObjectsMovieClosed.Length; i++)
+        {
+            if (fadeObjectsMovieClosed[i].isStartNoAlpha)
+            {
+                if (fadeObjectsMovieClosed[i].theObject)
+                {
+                    fadeObjectsMovieClosed[i].theObject.color = new Color(fadeObjectsMovieClosed[i].theObject.color.r, fadeObjectsMovieClosed[i].theObject.color.g, fadeObjectsMovieClosed[i].theObject.color.b, 0);
+                }
+                else
+                {
+                    fadeObjectsMovieClosed[i].theObjectRAW.color = new Color(fadeObjectsMovieClosed[i].theObjectRAW.color.r, fadeObjectsMovieClosed[i].theObjectRAW.color.g, fadeObjectsMovieClosed[i].theObjectRAW.color.b, 0);
+                }
+            }
+            else
+            {
+                if (fadeObjectsMovieClosed[i].theObject)
+                {
+                    fadeObjectsMovieClosed[i].theObject.color = new Color(fadeObjectsMovieClosed[i].theObject.color.r, fadeObjectsMovieClosed[i].theObject.color.g, fadeObjectsMovieClosed[i].theObject.color.b, 1);
+                    fadeObjectsMovieClosed[i].origingalAlpha = fadeObjectsMovieClosed[i].theObject.color.a;
+                }
+                else
+                {
+                    fadeObjectsMovieClosed[i].theObjectRAW.color = new Color(fadeObjectsMovieClosed[i].theObjectRAW.color.r, fadeObjectsMovieClosed[i].theObjectRAW.color.g, fadeObjectsMovieClosed[i].theObjectRAW.color.b, 1);
+                    fadeObjectsMovieClosed[i].origingalAlpha = fadeObjectsMovieClosed[i].theObjectRAW.color.a;
+                }
+            }
+
         }
     }
 
@@ -80,12 +170,12 @@ public class AnimationManager : MonoBehaviour
     {
         for (int i = 0; i < objectsToAnimate.Length; i++)
         {
-            objectsToAnimate[i].theObject.transform.DOLocalMove(objectsToAnimate[i].newPos, objectsToAnimate[i].timeToAnimate);
-            objectsToAnimate[i].theObject.transform.DOScale(objectsToAnimate[i].newScale, objectsToAnimate[i].timeToAnimate);
+            objectsToAnimate[i].theObject.transform.DOLocalMove(objectsToAnimate[i].newPos, objectsToAnimate[i].timeToAnimate).SetEase(Ease.OutCirc);
+            objectsToAnimate[i].theObject.transform.DOScale(objectsToAnimate[i].newScale, objectsToAnimate[i].timeToAnimate).SetEase(Ease.OutCirc);
 
             if (objectsToAnimate[i].targetSprite)
             {
-                objectsToAnimate[i].imageToChange.DOCrossfadeImage(objectsToAnimate[i].targetSprite, objectsToAnimate[i].timeToAnimate);
+                objectsToAnimate[i].imageToChange.DOCrossfadeImage(objectsToAnimate[i].targetSprite, objectsToAnimate[i].timeToAnimate).SetEase(Ease.OutCirc);
             }
         }
 
@@ -116,5 +206,203 @@ public class AnimationManager : MonoBehaviour
         }
 
         UIManager.Instance.AfterRewind();
+    }
+
+
+    public void AnimateSidePanel()
+    {
+        Timer.Instance.timerIsRunning = false;
+
+        for (int i = 0; i < fadeObjectsInfoPressed.Length; i++)
+        {
+            if (fadeObjectsInfoPressed[i].theObject)
+            {
+                fadeObjectsInfoPressed[i].theObject.DOFade(fadeObjectsInfoPressed[i].targetAlpha, fadeObjectsInfoPressed[i].timeToAnimate);
+            }
+            else
+            {
+                fadeObjectsInfoPressed[i].theObjectRAW.DOFade(fadeObjectsInfoPressed[i].targetAlpha, fadeObjectsInfoPressed[i].timeToAnimate);
+            }
+        }
+    }
+
+    public void CallOpenInfoScreen(bool Open)
+    {
+        StartCoroutine(OpenInfoScreen(Open));
+    }
+
+    public IEnumerator OpenInfoScreen(bool Open)
+    {
+        if (Open)
+        {
+            yield return new WaitForSeconds(0.2f);
+            BgBeforeVideoPlay.SetActive(true);
+            playerOfVideos.Stop();
+
+            MoveScreenState(true);
+            CloseInfoBar();
+            CloseMovieBar();
+        }
+        else
+        {
+            MoveScreenState(false);
+            BgBeforeVideoPlay.SetActive(false);
+
+            playerOfVideos.Play();
+
+            for (int i = 0; i < fadeObjectsInfoClosed.Length; i++)
+            {
+                if (fadeObjectsInfoClosed[i].theObject)
+                {
+                    fadeObjectsInfoClosed[i].theObject.DOFade(fadeObjectsInfoClosed[i].origingalAlpha, fadeObjectsInfoClosed[i].timeToAnimate);
+                }
+                else
+                {
+                    fadeObjectsInfoClosed[i].theObjectRAW.DOFade(fadeObjectsInfoClosed[i].origingalAlpha, fadeObjectsInfoClosed[i].timeToAnimate);
+                }
+            }
+            yield return null;
+        }
+    }
+    private void CloseInfoBar()
+    {
+        for (int i = 0; i < fadeObjectsInfoClosed.Length; i++)
+        {
+            if (fadeObjectsInfoClosed[i].theObject)
+            {
+                fadeObjectsInfoClosed[i].theObject.DOFade(fadeObjectsInfoClosed[i].origingalAlpha, fadeObjectsInfoClosed[i].timeToAnimate);
+            }
+            else
+            {
+                fadeObjectsInfoClosed[i].theObjectRAW.DOFade(fadeObjectsInfoClosed[i].origingalAlpha, fadeObjectsInfoClosed[i].timeToAnimate);
+            }
+        }
+    }
+
+    private void CloseMovieBar()
+    {
+        for (int i = 0; i < fadeObjectsMovieClosed.Length; i++)
+        {
+            if (fadeObjectsMovieClosed[i].theObject)
+            {
+                fadeObjectsMovieClosed[i].theObject.DOFade(fadeObjectsMovieClosed[i].origingalAlpha, fadeObjectsMovieClosed[i].timeToAnimate);
+            }
+            else
+            {
+                fadeObjectsMovieClosed[i].theObjectRAW.DOFade(fadeObjectsMovieClosed[i].origingalAlpha, fadeObjectsMovieClosed[i].timeToAnimate);
+            }
+        }
+    }
+
+    private void MoveScreenState(bool IN)
+    {
+        if (IN)
+        {
+            sidePanel.theObject.transform.DOLocalMove(sidePanel.newPos, sidePanel.timeToAnimate).SetEase(Ease.OutCirc);
+        }
+        else
+        {
+            sidePanel.theObject.transform.DOLocalMove(sidePanel.originalPos, sidePanel.timeToAnimate).SetEase(Ease.OutCirc);
+        }
+    }
+    public void ChangeVideoLanguage(int index)
+    {
+        BgBeforeVideoPlay.SetActive(true);
+
+        playerOfVideos.Stop();
+        MoveScreenState(false);
+
+        playerOfVideos.clip = videoLanguages[index];
+        FadeOutVideoBar(true);
+    }
+
+    public void FadeOutVideoBar(bool open)
+    {
+        if (!open)
+        {
+            for (int i = 0; i < fadeObjectsMovieClosed.Length; i++)
+            {
+                if (fadeObjectsMovieClosed[i].theObject)
+                {
+                    fadeObjectsMovieClosed[i].theObject.DOFade(fadeObjectsMovieClosed[i].targetAlpha, fadeObjectsMovieClosed[i].timeToAnimate);
+                }
+                else
+                {
+                    fadeObjectsMovieClosed[i].theObjectRAW.DOFade(fadeObjectsMovieClosed[i].targetAlpha, fadeObjectsMovieClosed[i].timeToAnimate);
+                }
+            }
+        }
+        else
+        {
+            Timer.Instance.timerIsRunning = false;
+
+            for (int i = 0; i < fadeObjectsMovieClosed.Length; i++)
+            {
+                if (fadeObjectsMovieClosed[i].theObject)
+                {
+                    fadeObjectsMovieClosed[i].theObject.DOFade(fadeObjectsMovieClosed[i].origingalAlpha, fadeObjectsMovieClosed[i].timeToAnimate);
+                }
+                else
+                {
+                    fadeObjectsMovieClosed[i].theObjectRAW.DOFade(fadeObjectsMovieClosed[i].origingalAlpha, fadeObjectsMovieClosed[i].timeToAnimate);
+                }
+            }
+            CloseInfoBar();
+            StartCoroutine(StartVidAfterFadeOut(fadeObjectsMovieClosed[0].timeToAnimate + 0.1f));
+        }
+    }
+
+    IEnumerator StartVidAfterFadeOut(float time)
+    {
+        yield return new WaitForSeconds(time);
+        BgBeforeVideoPlay.SetActive(false);
+        playerOfVideos.Play();
+    }
+
+    public void CloseSidePanel()
+    {
+        BgBeforeVideoPlay.SetActive(true);
+        playerOfVideos.Stop();
+
+        for (int i = 0; i < fadeObjectsInfoClosed.Length; i++)
+        {
+            if (fadeObjectsInfoClosed[i].theObject)
+            {
+                fadeObjectsInfoClosed[i].theObject.DOFade(0, fadeObjectsInfoClosed[i].timeToAnimate);
+            }
+            else
+            {
+                fadeObjectsInfoClosed[i].theObjectRAW.DOFade(0, fadeObjectsInfoClosed[i].timeToAnimate);
+            }
+        }
+
+        for (int i = 0; i < fadeObjectsMovieClosed.Length; i++)
+        {
+            if (fadeObjectsMovieClosed[i].theObject)
+            {
+                fadeObjectsMovieClosed[i].theObject.DOFade(0, fadeObjectsMovieClosed[i].timeToAnimate);
+            }
+            else
+            {
+                fadeObjectsMovieClosed[i].theObjectRAW.DOFade(0, fadeObjectsMovieClosed[i].timeToAnimate);
+            }
+        }
+
+        for (int i = 0; i < fadeObjectsGoToGame.Length; i++)
+        {
+            if (fadeObjectsGoToGame[i].theObject)
+            {
+                fadeObjectsGoToGame[i].theObject.DOFade(fadeObjectsGoToGame[i].targetAlpha, fadeObjectsGoToGame[i].timeToAnimate);
+            }
+            else
+            {
+                fadeObjectsGoToGame[i].theObjectRAW.DOFade(fadeObjectsGoToGame[i].targetAlpha, fadeObjectsGoToGame[i].timeToAnimate);
+            }
+        }
+
+        if (TouchManager.isInGame)
+        {
+            Timer.Instance.timerIsRunning = true;
+        }
     }
 }

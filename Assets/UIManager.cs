@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Localization.Settings;
 
 public class UIManager : MonoBehaviour
 {
@@ -49,5 +50,17 @@ public class UIManager : MonoBehaviour
         Timer.Instance.timerIsRunning = true;
 
         ColorPickerSimple.Instacne.colorPickedFrontImage.color = PainterManager.Instacne.painter.Color;
+
+        PainterManager.Instacne.hitScreenData.enabled = false;
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
+
+    public void ChangeLocalization(int index)
+    {
+        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
     }
 }

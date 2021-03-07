@@ -23,6 +23,9 @@ public class ColorPickerSimple : MonoBehaviour
 
     public Image colorPickedFrontImage, colorPickedBackImage;
 
+    public Scrollbar HSVbar;
+
+    float valueHSV = 0;
     void Awake() {
         Instacne = this;
         Camera = Camera.main;
@@ -136,7 +139,9 @@ public class ColorPickerSimple : MonoBehaviour
 
                                 Color = new Color(Color.r, Color.g, Color.b, 1);
 
-                                PainterManager.Instacne.painter.Color = Color;
+                                colorPickedFrontImage.color = Color;
+
+                                ChangeHSVWheel();
                                 Debug.Log(Color);
                             }
                         }
@@ -146,7 +151,6 @@ public class ColorPickerSimple : MonoBehaviour
                 if (touch.phase == TouchPhase.Ended)
                 {
                     Selected = false;
-                    PainterManager.Instacne.hitScreenData.enabled = true;
                 }
             }
             else
@@ -211,11 +215,12 @@ public class ColorPickerSimple : MonoBehaviour
                                 Selector.transform.position = mousePos;
                                 Color = Data[y * Width + x];
 
+
                                 Color = new Color(Color.r, Color.g, Color.b, 1);
 
-                                PainterManager.Instacne.painter.Color = Color;
-
                                 colorPickedFrontImage.color = Color;
+
+                                ChangeHSVWheel();
                                 Debug.Log(Color);
                             }
                         }
@@ -233,6 +238,39 @@ public class ColorPickerSimple : MonoBehaviour
         colorPickedFrontImage.color = colorPickedBackImage.color;
         colorPickedBackImage.color = temp;
 
+
+        PainterManager.Instacne.painter.Color = colorPickedFrontImage.color;
+    }
+
+    public void ChangeHSV()
+    {
+        float h, s;
+
+        Color.RGBToHSV(colorPickedFrontImage.color, out h, out s, out valueHSV);
+
+        valueHSV = HSVbar.value;
+
+        if(valueHSV <= 0.01f)
+        {
+            valueHSV = 0.01f;
+        }
+        colorPickedFrontImage.color = Color.HSVToRGB(h, s, valueHSV);
+
+        PainterManager.Instacne.painter.Color = colorPickedFrontImage.color;
+    }
+    public void ChangeHSVWheel()
+    {
+        float h, s;
+
+        Color.RGBToHSV(colorPickedFrontImage.color, out h, out s, out valueHSV);
+
+        valueHSV = HSVbar.value;
+
+        if(valueHSV <= 0.01f)
+        {
+            valueHSV = 0.01f;
+        }
+        colorPickedFrontImage.color = Color.HSVToRGB(h, s, valueHSV);
 
         PainterManager.Instacne.painter.Color = colorPickedFrontImage.color;
     }

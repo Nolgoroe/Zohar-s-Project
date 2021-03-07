@@ -6,6 +6,7 @@ TagManager:
   tags:
   - TexturePrefab
   - ShoePiece
+  - Side Bar
   layers:
   - Default
   - TransparentFX

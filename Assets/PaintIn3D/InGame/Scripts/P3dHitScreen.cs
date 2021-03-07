@@ -237,7 +237,7 @@ namespace PaintIn3D
 			}
 		}
 
-		private void Paint(FINGER finger, bool down, bool up)
+		public void Paint(FINGER finger, bool down, bool up)
 		{
 			var link = GetLink(finger);
 			var head = finger.GetSmoothScreenPosition(0.0f);
