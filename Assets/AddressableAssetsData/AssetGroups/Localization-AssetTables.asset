@@ -18,28 +18,28 @@ MonoBehaviour:
   m_GUID: 5b9baba1d62347e42b366a2e7f82c9ff
   m_SerializeEntries:
   - m_GUID: b66a6f33a76ab9844833bd4b086e77b9
-    m_Address: New AssetTableCollection_ar-LB
+    m_Address: Language of Text_ar-LB
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-ar-LB
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
   - m_GUID: 9fe3905faa2cc0042ba034b47230c600
-    m_Address: New AssetTableCollection_zh
+    m_Address: Language of Text_zh
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-zh
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
   - m_GUID: 33180edc179864e4aac9a298f08f8388
-    m_Address: New AssetTableCollection_en
+    m_Address: Language of Text_en
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-en
     m_MainAsset: {fileID: 0}
     m_TargetAsset: {fileID: 0}
   - m_GUID: 9e310d8d388b0424fb39a2318d3fbd05
-    m_Address: New AssetTableCollection_he
+    m_Address: Language of Text_he
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-he

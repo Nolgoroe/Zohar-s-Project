@@ -11,7 +11,9 @@ public class UIManager : MonoBehaviour
     public static UIManager Instance;
 
 
-    public GameObject CanvasScreens;
+    public GameObject firstScreenUI, lastScreenUI, sidePanel;
+
+    public Transform shoeGO;
 
     private void Start()
     {
@@ -22,6 +24,10 @@ public class UIManager : MonoBehaviour
 
         letsStartButton.interactable = true;
         letsStartButton.GetComponent<Image>().raycastTarget = true;
+
+        lastScreenUI.SetActive(false);
+        firstScreenUI.SetActive(true);
+        sidePanel.SetActive(true);
     }
 
 
@@ -45,7 +51,7 @@ public class UIManager : MonoBehaviour
 
     public void GoToGame()
     {
-        CanvasScreens.SetActive(false);
+        firstScreenUI.SetActive(false);
         TouchManager.isInGame = true;
         Timer.Instance.timerIsRunning = true;
 
@@ -62,5 +68,16 @@ public class UIManager : MonoBehaviour
     public void ChangeLocalization(int index)
     {
         LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
+    }
+
+    public IEnumerator GoLastScreen()
+    {
+        yield return new WaitForSeconds(1.1f);
+        shoeGO.transform.rotation = Quaternion.identity;
+        shoeGO.transform.position = Vector3.zero;
+        TouchManager.isInGame = false;
+
+        firstScreenUI.SetActive(false);
+        lastScreenUI.SetActive(true);
     }
 }

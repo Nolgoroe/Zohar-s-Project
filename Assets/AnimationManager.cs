@@ -48,6 +48,8 @@ public class AnimationManager : MonoBehaviour
     public FadeAnimatedObjects[] fadeObjectsInfoClosed;
     public FadeAnimatedObjects[] fadeObjectsMovieClosed;
     public FadeAnimatedObjects[] fadeObjectsGoToGame;
+
+    public Button[] languageButtons;
     void Start()
     {
         for (int i = 0; i < objectsToAnimate.Length; i++)
@@ -164,6 +166,8 @@ public class AnimationManager : MonoBehaviour
             }
 
         }
+
+        DisableLanguageButtons();
     }
 
     public void AnimateNow()
@@ -211,6 +215,7 @@ public class AnimationManager : MonoBehaviour
 
     public void AnimateSidePanel()
     {
+        EnableLanguageButtons();
         Timer.Instance.timerIsRunning = false;
 
         for (int i = 0; i < fadeObjectsInfoPressed.Length; i++)
@@ -228,6 +233,7 @@ public class AnimationManager : MonoBehaviour
 
     public void CallOpenInfoScreen(bool Open)
     {
+        DisableLanguageButtons();
         StartCoroutine(OpenInfoScreen(Open));
     }
 
@@ -307,6 +313,7 @@ public class AnimationManager : MonoBehaviour
     }
     public void ChangeVideoLanguage(int index)
     {
+        DisableLanguageButtons();
         BgBeforeVideoPlay.SetActive(true);
 
         playerOfVideos.Stop();
@@ -320,6 +327,7 @@ public class AnimationManager : MonoBehaviour
     {
         if (!open)
         {
+            EnableLanguageButtons();
             for (int i = 0; i < fadeObjectsMovieClosed.Length; i++)
             {
                 if (fadeObjectsMovieClosed[i].theObject)
@@ -363,6 +371,7 @@ public class AnimationManager : MonoBehaviour
     {
         BgBeforeVideoPlay.SetActive(true);
         playerOfVideos.Stop();
+        DisableLanguageButtons();
 
         for (int i = 0; i < fadeObjectsInfoClosed.Length; i++)
         {
@@ -403,6 +412,21 @@ public class AnimationManager : MonoBehaviour
         if (TouchManager.isInGame)
         {
             Timer.Instance.timerIsRunning = true;
+        }
+    }
+
+    public void DisableLanguageButtons()
+    {
+        foreach (Button B in languageButtons)
+        {
+            B.interactable = false;
+        }
+    }
+    public void EnableLanguageButtons()
+    {
+        foreach (Button B in languageButtons)
+        {
+            B.interactable = true;
         }
     }
 }

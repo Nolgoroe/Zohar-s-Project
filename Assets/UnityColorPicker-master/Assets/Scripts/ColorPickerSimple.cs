@@ -43,7 +43,7 @@ public class ColorPickerSimple : MonoBehaviour
 
     void Update() {
 
-        if (TouchManager.isInGame)
+        if (TouchManager.isInGame && !TouchManager.Instance.chosenTex)
         {
             if (Input.touchCount > 0)
             {
@@ -233,46 +233,56 @@ public class ColorPickerSimple : MonoBehaviour
 
     public void SwitchColorPics()
     {
-        Color temp;
-        temp = colorPickedFrontImage.color;
-        colorPickedFrontImage.color = colorPickedBackImage.color;
-        colorPickedBackImage.color = temp;
+        if (!TouchManager.Instance.chosenTex)
+        {
+            Color temp;
+            temp = colorPickedFrontImage.color;
+            colorPickedFrontImage.color = colorPickedBackImage.color;
+            colorPickedBackImage.color = temp;
 
 
-        PainterManager.Instacne.painter.Color = colorPickedFrontImage.color;
+            PainterManager.Instacne.painter.Color = colorPickedFrontImage.color;
+        }
     }
 
     public void ChangeHSV()
     {
-        float h, s;
-
-        Color.RGBToHSV(colorPickedFrontImage.color, out h, out s, out valueHSV);
-
-        valueHSV = HSVbar.value;
-
-        if(valueHSV <= 0.01f)
+        if (!TouchManager.Instance.chosenTex)
         {
-            valueHSV = 0.01f;
-        }
-        colorPickedFrontImage.color = Color.HSVToRGB(h, s, valueHSV);
+            float h, s;
 
-        PainterManager.Instacne.painter.Color = colorPickedFrontImage.color;
+            Color.RGBToHSV(colorPickedFrontImage.color, out h, out s, out valueHSV);
+
+            valueHSV = HSVbar.value;
+
+            if (valueHSV <= 0.01f)
+            {
+                valueHSV = 0.01f;
+            }
+            colorPickedFrontImage.color = Color.HSVToRGB(h, s, valueHSV);
+
+            PainterManager.Instacne.painter.Color = colorPickedFrontImage.color;
+        }
+
     }
     public void ChangeHSVWheel()
     {
-        float h, s;
-
-        Color.RGBToHSV(colorPickedFrontImage.color, out h, out s, out valueHSV);
-
-        valueHSV = HSVbar.value;
-
-        if(valueHSV <= 0.01f)
+        if (!TouchManager.Instance.chosenTex)
         {
-            valueHSV = 0.01f;
-        }
-        colorPickedFrontImage.color = Color.HSVToRGB(h, s, valueHSV);
+            float h, s;
 
-        PainterManager.Instacne.painter.Color = colorPickedFrontImage.color;
+            Color.RGBToHSV(colorPickedFrontImage.color, out h, out s, out valueHSV);
+
+            valueHSV = HSVbar.value;
+
+            if (valueHSV <= 0.01f)
+            {
+                valueHSV = 0.01f;
+            }
+            colorPickedFrontImage.color = Color.HSVToRGB(h, s, valueHSV);
+
+            PainterManager.Instacne.painter.Color = colorPickedFrontImage.color;
+        }
     }
 } 
 
