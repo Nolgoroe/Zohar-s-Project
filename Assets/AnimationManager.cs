@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using System;
-using UnityEngine.Video;
 
 [Serializable]
 public class AnimatedObject
@@ -32,13 +31,8 @@ public class FadeAnimatedObjects
 }
 public class AnimationManager : MonoBehaviour
 {
-    public GameObject BgBeforeVideoPlay;
-
-    public VideoPlayer playerOfVideos;
 
     public Transform rootObjectOfSideScreen;
-
-    public VideoClip[] videoLanguages;
 
     public AnimatedObject[] objectsToAnimate;
     public FadeAnimatedObjects[] objectsToFade;
@@ -242,8 +236,7 @@ public class AnimationManager : MonoBehaviour
         if (Open)
         {
             yield return new WaitForSeconds(0.2f);
-            BgBeforeVideoPlay.SetActive(true);
-            playerOfVideos.Stop();
+            UIManager.Instance.playerOfVideos.Stop();
 
             MoveScreenState(true);
             CloseInfoBar();
@@ -252,9 +245,16 @@ public class AnimationManager : MonoBehaviour
         else
         {
             MoveScreenState(false);
-            BgBeforeVideoPlay.SetActive(false);
 
-            playerOfVideos.Play();
+            if (ReadFolderData.Instance.languageVideoClipsURL.Count > UIManager.Instance.clickedIndexByInfo)
+            {
+                UIManager.Instance.playerOfVideos.url = ReadFolderData.Instance.languageVideoClipsURL[UIManager.Instance.clickedIndexByInfo];
+                UIManager.Instance.playerOfVideos.Play();
+            }
+            else
+            {
+                Debug.Log("No Movie Found");
+            }
 
             for (int i = 0; i < fadeObjectsInfoClosed.Length; i++)
             {
@@ -313,13 +313,14 @@ public class AnimationManager : MonoBehaviour
     }
     public void ChangeVideoLanguage(int index)
     {
-        DisableLanguageButtons();
-        BgBeforeVideoPlay.SetActive(true);
+        UIManager.Instance.clickedIndexByInfo = index;
 
-        playerOfVideos.Stop();
+        DisableLanguageButtons();
+
+        UIManager.Instance.playerOfVideos.Stop();
         MoveScreenState(false);
 
-        playerOfVideos.clip = videoLanguages[index];
+        //playerOfVideos.clip = videoLanguages[index];
         FadeOutVideoBar(true);
     }
 
@@ -363,14 +364,20 @@ public class AnimationManager : MonoBehaviour
     IEnumerator StartVidAfterFadeOut(float time)
     {
         yield return new WaitForSeconds(time);
-        BgBeforeVideoPlay.SetActive(false);
-        playerOfVideos.Play();
+        if (ReadFolderData.Instance.languageVideoClipsURL.Count > UIManager.Instance.clickedIndexByInfo)
+        {
+            UIManager.Instance.playerOfVideos.url = ReadFolderData.Instance.languageVideoClipsURL[UIManager.Instance.clickedIndexByInfo];
+            UIManager.Instance.playerOfVideos.Play();
+        }
+        else
+        {
+            Debug.Log("No Movie Found");
+        }
     }
 
     public void CloseSidePanel()
     {
-        BgBeforeVideoPlay.SetActive(true);
-        playerOfVideos.Stop();
+        UIManager.Instance.playerOfVideos.Stop();
         DisableLanguageButtons();
 
         for (int i = 0; i < fadeObjectsInfoClosed.Length; i++)

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Video;
 using UnityEngine.UI;
 using UnityEngine.Localization.Settings;
 
@@ -14,6 +15,13 @@ public class UIManager : MonoBehaviour
     public GameObject firstScreenUI, lastScreenUI, sidePanel;
 
     public Transform shoeGO;
+
+    public RawImage infoTextImage;
+    public Image coloredBar;
+
+    public VideoPlayer playerOfVideos;
+
+    public int clickedIndexByInfo;
 
     private void Start()
     {
@@ -65,11 +73,20 @@ public class UIManager : MonoBehaviour
         Application.Quit();
     }
 
-    public void ChangeLocalization(int index)
+    public void ChangeLocalizationImages(int index)
     {
-        LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
-    }
+        clickedIndexByInfo = index;
+        if (ReadFolderData.Instance.languageTextures.Count > index)
+        {
+            infoTextImage.texture = ReadFolderData.Instance.languageTextures[index];
+        }
+        else
+        {
+            Debug.Log("No image Found");
+        }
+        //LocalizationSettings.SelectedLocale = LocalizationSettings.AvailableLocales.Locales[index];
 
+    }
     public IEnumerator GoLastScreen()
     {
         yield return new WaitForSeconds(1.1f);
@@ -79,5 +96,15 @@ public class UIManager : MonoBehaviour
 
         firstScreenUI.SetActive(false);
         lastScreenUI.SetActive(true);
+
+        yield return new WaitForSeconds(2);
+        for (int i = 0; i < 10000; i++)
+        {
+            if (!System.IO.File.Exists(Application.streamingAssetsPath + "/Screenshot" + i + ".png"))
+            {
+                ScreenCapture.CaptureScreenshot(Application.streamingAssetsPath + "/Screenshot" + i + ".png");
+                break;
+            }
+        }
     }
 }
