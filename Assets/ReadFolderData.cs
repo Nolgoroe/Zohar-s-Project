@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Video;
 using System.IO;
 using UnityEngine.Localization;
+using UnityEngine.Networking;
 
 
 public class ReadFolderData : MonoBehaviour
@@ -27,7 +28,7 @@ public class ReadFolderData : MonoBehaviour
         {
             if (f.ToString().Contains("Lang"))
             {
-                print(f.Name);
+
                 StartCoroutine(LoadImages(f));
             }
         }
@@ -38,7 +39,6 @@ public class ReadFolderData : MonoBehaviour
         {
             if (f.ToString().Contains("Lang"))
             {
-                print(f.Name);
                 StartCoroutine(LoadMovies(f));
             }
         }
@@ -67,6 +67,7 @@ public class ReadFolderData : MonoBehaviour
         {
             string wwwImageFilePath = "file://" + GameData.FullName.ToString();
         WWW www = new WWW(wwwImageFilePath);
+        //UnityWebRequest www = new UnityWebRequest(wwwImageFilePath);
         yield return www;
 
             languageVideoClipsURL.Add(www.url);

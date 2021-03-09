@@ -56,4 +56,48 @@ public class PainterManager : MonoBehaviour
 
         painter.Radius = Mathf.Clamp(painter.Radius, 0.1f, 5f);
     }
+
+    public void ThickStrongNoShape()
+    {
+        painter.Radius = .7f;
+        painter.Hardness = 1f;
+        painter.Texture = null;
+    }
+
+    public void ThickStrongCircle(Texture tex)
+    {
+        painter.Radius = .7f;
+        painter.Hardness = 1f;
+        painter.Texture = tex;
+    }
+
+    public void ThickWeakCircle(Texture tex)
+    {
+        painter.Radius = .7f;
+        painter.Hardness = 0.3f;
+        painter.Texture = tex;
+    }
+
+    public void ThinStrongNoShape()
+    {
+        painter.Radius = 0.3f;
+        painter.Hardness = 1f;
+        painter.Texture = null;
+
+    }
+
+    public void ThinWeakNoShape()
+    {
+        painter.Radius = 0.3f;
+        painter.Hardness = 0.3f;
+        painter.Texture = null;
+    }
+
+    public void ReallyThinWeakNoShape()
+    {
+        painter.Radius = 0.1f;
+        painter.Hardness = 1f;
+        painter.Texture = null;
+
+    }
 }

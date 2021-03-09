@@ -97,10 +97,10 @@ public class TouchManager : MonoBehaviour
                             texture.gameObject.SetActive(true);
                             texture.texture = THS.heldTexture;
 
-                            //PainterManager.Instacne.painter.Texture = THS.heldTexture;
-
-                            Vector3 mousePos = Camera.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 100));
+                            Vector3 mousePos = Camera.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y));
                             mousePos.z = texture.transform.position.z;
+                            //Debug.DrawRay(Camera.transform.position, mousePos, Color.red);
+
                             texture.transform.position = mousePos;
                             //Debug.Log("IN TEX");
                         }
@@ -182,6 +182,7 @@ public class TouchManager : MonoBehaviour
 
                     textureScrollRect.enabled = true;
                     timerForApplyTex = 0;
+                    timerForGetTex = 0;
                     previouslyDetectedPiece = null;
                     stopCheck = false;
                     clickingTex = false;
@@ -249,9 +250,9 @@ public class TouchManager : MonoBehaviour
         {
             changingTexNow = true;
             Vector3 mousePos = Camera.ScreenToWorldPoint(new Vector3(touch.position.x, touch.position.y, 100));
-            mousePos.z = texture.transform.position.z;
+            mousePos.z = 75;
             texture.transform.position = mousePos;
-
+            texture.transform.localScale = new Vector3(1, 1, 1);
             RaycastHit hit;
             Ray ray = Camera.ScreenPointToRay(touch.position);
 
@@ -260,33 +261,41 @@ public class TouchManager : MonoBehaviour
             {
                 if (hit.transform.CompareTag("ShoePiece"))
                 {
+                    texture.transform.position = new Vector3(hit.point.x, hit.point.y, hit.point.z - 1);
+                    texture.transform.localScale = new Vector3(0.2f, 0.2f, 1);
+
                     timerForApplyTex += Time.deltaTime;
 
-                    if (timerForApplyTex >= 0.05f)
+                    P3dPaintable paintableObject = hit.transform.GetComponent<P3dPaintable>();
+
+                    if (paintableObject)
                     {
-                        Transform newDetected = hit.transform;
-
-                        P3dPaintable paintableObject = hit.transform.GetComponent<P3dPaintable>();
-                        
-                        if (newDetected != previouslyDetectedPiece)
+                        if (timerForApplyTex >= 0.05f)
                         {
-                            timerForApplyTex = 0;
+                            Transform newDetected = hit.transform;
 
-                            if (previouslyDetectedPiece)
+
+                            if (newDetected != previouslyDetectedPiece)
                             {
-                                Renderer previouslyDetectedPieceRenderer = previouslyDetectedPiece.transform.GetComponent<Renderer>();
-                                previouslyDetectedPieceRenderer.materials[0].SetTexture("_BaseMap", null);
-                                Debug.Log("Previous: " + previouslyDetectedPieceRenderer.transform.name);
-                                yield return null; 
-                                yield return null; 
-                            }
+                                timerForApplyTex = 0;
 
-                            Renderer newDetectedPieceRenderer = newDetected.transform.GetComponent<Renderer>();
-                            newDetectedPieceRenderer.materials[0].SetTexture("_BaseMap", texture.texture);
-                            Debug.Log("New: " + newDetectedPieceRenderer.transform.name);
-                            previouslyDetectedPiece = newDetected;
-                            RefreshMap(paintableObject);
-                            
+                                if (previouslyDetectedPiece)
+                                {
+                                    Renderer previouslyDetectedPieceRenderer = previouslyDetectedPiece.transform.GetComponent<Renderer>();
+                                    previouslyDetectedPieceRenderer.materials[0].SetTexture("_BaseMap", null);
+                                    Debug.Log("Previous: " + previouslyDetectedPieceRenderer.transform.name);
+                                    yield return null;
+                                    yield return null;
+                                }
+
+                                Renderer newDetectedPieceRenderer = newDetected.transform.GetComponent<Renderer>();
+                                newDetectedPieceRenderer.materials[0].SetTexture("_BaseMap", texture.texture);
+                                Debug.Log("New: " + newDetectedPieceRenderer.transform.name);
+                                previouslyDetectedPiece = newDetected;
+
+                                RefreshMap(paintableObject);
+
+                            }
                         }
                     }
                 }

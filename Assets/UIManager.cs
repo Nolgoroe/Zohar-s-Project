@@ -98,13 +98,23 @@ public class UIManager : MonoBehaviour
         lastScreenUI.SetActive(true);
 
         yield return new WaitForSeconds(2);
-        for (int i = 0; i < 10000; i++)
+        //for (int i = 0; i < 100000; i++)
+        //{
+        //    if (!System.IO.File.Exists(Application.streamingAssetsPath + "/Screenshot" + i + ".png"))
+        //    {
+        //        ScreenCapture.CaptureScreenshot(Application.streamingAssetsPath + "/Screenshot" + i + ".png");
+        //        break;
+        //    }
+        //}
+
+        string date = System.DateTime.Now.ToString();
+        date = date.Replace("/", "-");
+        date = date.Replace(" ", "_");
+        date = date.Replace(":", "-");
+
+        if (!System.IO.File.Exists(Application.streamingAssetsPath + "/Screenshot" + date + ".png"))
         {
-            if (!System.IO.File.Exists(Application.streamingAssetsPath + "/Screenshot" + i + ".png"))
-            {
-                ScreenCapture.CaptureScreenshot(Application.streamingAssetsPath + "/Screenshot" + i + ".png");
-                break;
-            }
+            ScreenCapture.CaptureScreenshot(Application.streamingAssetsPath + "/Screenshot" + date + ".png");
         }
     }
 }
